@@ -2,6 +2,7 @@
 function initStackMode() {
     let stack = new Stack();
     let cnt = 0;
+    document.querySelector(".canvas").className = "canvas stack-canvas";
     let pushButton = document.createElement("button");
     pushButton.className = "push-button";
     pushButton.innerText = "push";
@@ -18,7 +19,7 @@ function initStackMode() {
     initButton.className = "init-button";
     initButton.innerText = "init";
     initButton.addEventListener("click", () => {
-        showInitAnimation(stack);
+        showInitStackAnimation(stack);
         cnt = 0;
     });
     let commandListDiv = document.querySelector(".command-list");
@@ -46,14 +47,14 @@ function showPopAnimation(stack) {
         applyStackView(stack);
     }
 }
-function showInitAnimation(stack) {
+function showInitStackAnimation(stack) {
     let res = stack.init();
     applyStackView(stack);
 }
 function applyStackView(stack) {
     const canvas = document.querySelector(".canvas");
     const stackContainers = [];
-    canvas.innerHTML = "";
+    removeAllChildNodes(canvas);
     for (let i = 0; i < stack.top + 1; i++) {
         const key = stack.items[i];
         const stackContainer = document.createElement("div");

@@ -1,7 +1,7 @@
 * {
-  /* font-family: "Pretendard"; */
   font-family: "Inter";
   transition: all 150ms;
+  overflow: visible;
 }
 
 ::selection {
@@ -166,7 +166,6 @@ canvas {
   
   & > * {
     margin-top: -48px;
-    z-index: 1;
   }
 
   & .stack-container {
@@ -179,6 +178,35 @@ canvas {
       left: 50%;
       translate: -50% 0;
       bottom: 14px;
+    }
+  }
+}
+
+.queue-canvas {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+
+  & .queue_nodes-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+  }
+
+  & .queue-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & .key {
+      position: absolute;
+      font-family: Inter;
+      font-weight: 900;
+      font-size: 1.5rem;
     }
   }
 }

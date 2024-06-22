@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Program",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/js/bundle.js",
+      "preLaunchTask": "Compile TypeScript",
+      "outFiles": [
+        "${workspaceFolder}/js/**/*.js"
+      ]
+    }
+  ]
+}

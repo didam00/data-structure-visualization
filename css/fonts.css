@@ -1,4 +1,9 @@
 @font-face {
+  src: url("../res/fonts/Inter-VariableFont_slnt\,wght.ttf");
+  font-family: "Inter";
+}
+
+@font-face {
   src: url("../res/fonts/PretendardVariable.woff2");
   font-family: "Pretendard";
 }

@@ -24,6 +24,7 @@ function setStrcutureMode(mode: StrucutreMode) {
   switch (mode) {
     case "stack" : initStackMode(); break;
     case "queue" : initQueueMode(); break;
+    case "linkedList" : initLinkedListMode(); break;
   }
 }
 

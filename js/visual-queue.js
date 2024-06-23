@@ -7,19 +7,19 @@ function initQueueMode() {
     enqueueButton.className = "enqueue-button";
     enqueueButton.innerText = "enqueue";
     enqueueButton.addEventListener("click", () => {
-        showEnqueueAnimation(queue, cnt++);
+        runEnqueue(queue, cnt++);
     });
     let dequeueButton = document.createElement("button");
     dequeueButton.className = "dequeue-button";
     dequeueButton.innerText = "dequeue";
     dequeueButton.addEventListener("click", () => {
-        showDequeueAnimation(queue);
+        runDequeue(queue);
     });
     let initButton = document.createElement("button");
     initButton.className = "init-button";
     initButton.innerText = "init";
     initButton.addEventListener("click", () => {
-        showInitQueueAnimation(queue);
+        runInitQueue(queue);
     });
     let commandListDiv = document.querySelector(".command-list");
     commandListDiv.append(enqueueButton, dequeueButton, initButton);
@@ -28,7 +28,7 @@ function initQueueMode() {
     queueNodesContainer.className = "queue_nodes-container";
     document.querySelector(".canvas").appendChild(queueNodesContainer);
 }
-function showEnqueueAnimation(queue, data) {
+function runEnqueue(queue, data) {
     let res = queue.enqueue(data % 100 + 1);
     if (res !== null) {
         applyQueueView(queue);
@@ -44,13 +44,13 @@ function showEnqueueAnimation(queue, data) {
         newElement.animate(keyframes, options);
     }
 }
-function showDequeueAnimation(queue) {
+function runDequeue(queue) {
     let res = queue.dequeue();
     if (res !== null) {
         applyQueueView(queue);
     }
 }
-function showInitQueueAnimation(queue) {
+function runInitQueue(queue) {
     let res = queue.init();
     applyQueueView(queue);
 }
@@ -65,8 +65,8 @@ function applyQueueView(queue) {
         const key = queue.items[i];
         const stackContainer = document.createElement("div");
         stackContainer.className = "queue-container";
-        const stackNode = document.createElement("img");
         if (queue.front < i && i <= queue.rear) {
+            const stackNode = document.createElement("img");
             stackNode.src = "../res/svgs/queue.svg";
             const keyElement = document.createElement("span");
             keyElement.className = "key";
@@ -74,7 +74,8 @@ function applyQueueView(queue) {
             stackContainer.append(stackNode, keyElement);
         }
         else {
-            stackNode.src = "../res/svgs/queue-none.svg";
+            const stackNode = document.createElement("div");
+            stackNode.className = "none-node";
             stackContainer.appendChild(stackNode);
         }
         queueContainers.push(stackContainer);

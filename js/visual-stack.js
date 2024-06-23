@@ -7,25 +7,25 @@ function initStackMode() {
     pushButton.className = "push-button";
     pushButton.innerText = "push";
     pushButton.addEventListener("click", () => {
-        showPushAnimation(stack, cnt++);
+        runPush(stack, cnt++);
     });
     let popButton = document.createElement("button");
     popButton.className = "pop-button";
     popButton.innerText = "pop";
     popButton.addEventListener("click", () => {
-        showPopAnimation(stack);
+        runPop(stack);
     });
     let initButton = document.createElement("button");
     initButton.className = "init-button";
     initButton.innerText = "init";
     initButton.addEventListener("click", () => {
-        showInitStackAnimation(stack);
+        runInitStack(stack);
         cnt = 0;
     });
     let commandListDiv = document.querySelector(".command-list");
     commandListDiv.append(pushButton, popButton, initButton);
 }
-function showPushAnimation(stack, data) {
+function runPush(stack, data) {
     let res = stack.push(data % 100 + 1);
     if (res !== null) {
         applyStackView(stack);
@@ -41,13 +41,13 @@ function showPushAnimation(stack, data) {
         newElement.animate(keyframes, options);
     }
 }
-function showPopAnimation(stack) {
+function runPop(stack) {
     let res = stack.pop();
     if (res !== null) {
         applyStackView(stack);
     }
 }
-function showInitStackAnimation(stack) {
+function runInitStack(stack) {
     let res = stack.init();
     applyStackView(stack);
 }

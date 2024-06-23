@@ -8,21 +8,21 @@ function initQueueMode() {
   enqueueButton.className = "enqueue-button";
   enqueueButton.innerText = "enqueue";
   enqueueButton.addEventListener("click", () => {
-    showEnqueueAnimation(queue, cnt++);
+    runEnqueue(queue, cnt++);
   })
 
   let dequeueButton = document.createElement("button");
   dequeueButton.className = "dequeue-button";
   dequeueButton.innerText = "dequeue";
   dequeueButton.addEventListener("click", () => {
-    showDequeueAnimation(queue);
+    runDequeue(queue);
   })
 
   let initButton = document.createElement("button");
   initButton.className = "init-button";
   initButton.innerText = "init";
   initButton.addEventListener("click", () => {
-    showInitQueueAnimation(queue);
+    runInitQueue(queue);
   })
 
   let commandListDiv = document.querySelector(".command-list") as HTMLDivElement;
@@ -35,7 +35,7 @@ function initQueueMode() {
   (document.querySelector(".canvas") as HTMLDivElement).appendChild(queueNodesContainer);
 }
 
-function showEnqueueAnimation(queue: Queue, data: number): void {
+function runEnqueue(queue: Queue, data: number): void {
   let res = queue.enqueue(data % 100 + 1);
   if (res !== null) {
     applyQueueView(queue);
@@ -53,14 +53,14 @@ function showEnqueueAnimation(queue: Queue, data: number): void {
   }
 }
 
-function showDequeueAnimation(queue: Queue): void {
+function runDequeue(queue: Queue): void {
   let res = queue.dequeue();
   if (res !== null) {
     applyQueueView(queue);
   }
 }
 
-function showInitQueueAnimation(queue: Queue): void {
+function runInitQueue(queue: Queue): void {
   let res = queue.init();
   applyQueueView(queue);
 }
@@ -81,18 +81,19 @@ function applyQueueView(queue: Queue) {
     const stackContainer = document.createElement("div");
     stackContainer.className = "queue-container";
   
-    const stackNode = document.createElement("img");
-
-    if (queue.front < i && i <= queue.rear) {
-      stackNode.src = "../res/svgs/queue.svg";
     
+    if (queue.front < i && i <= queue.rear) {
+      const stackNode = document.createElement("img");
+      stackNode.src = "../res/svgs/queue.svg";
+      
       const keyElement = document.createElement("span");
       keyElement.className = "key";
       keyElement.innerText = key.toString();
-    
+      
       stackContainer.append(stackNode, keyElement);
     } else {
-      stackNode.src = "../res/svgs/queue-none.svg";
+      const stackNode = document.createElement("div");
+      stackNode.className = "none-node";
     
       stackContainer.appendChild(stackNode);
     }

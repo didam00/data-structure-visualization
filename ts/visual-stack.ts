@@ -8,21 +8,21 @@ function initStackMode() {
   pushButton.className = "push-button";
   pushButton.innerText = "push";
   pushButton.addEventListener("click", () => {
-    showPushAnimation(stack, cnt++);
+    runPush(stack, cnt++);
   })
 
   let popButton = document.createElement("button");
   popButton.className = "pop-button";
   popButton.innerText = "pop";
   popButton.addEventListener("click", () => {
-    showPopAnimation(stack);
+    runPop(stack);
   })
 
   let initButton = document.createElement("button");
   initButton.className = "init-button";
   initButton.innerText = "init";
   initButton.addEventListener("click", () => {
-    showInitStackAnimation(stack);
+    runInitStack(stack);
     cnt = 0;
   })
 
@@ -30,7 +30,7 @@ function initStackMode() {
   commandListDiv.append(pushButton, popButton, initButton);
 }
 
-function showPushAnimation(stack: Stack, data: number): void {
+function runPush(stack: Stack, data: number): void {
   let res = stack.push(data % 100 + 1);
   if (res !== null) {
     applyStackView(stack);
@@ -48,14 +48,14 @@ function showPushAnimation(stack: Stack, data: number): void {
   }
 }
 
-function showPopAnimation(stack: Stack): void {
+function runPop(stack: Stack): void {
   let res = stack.pop();
   if (res !== null) {
     applyStackView(stack);
   }
 }
 
-function showInitStackAnimation(stack: Stack): void {
+function runInitStack(stack: Stack): void {
   let res = stack.init();
   applyStackView(stack);
 }

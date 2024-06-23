@@ -25,6 +25,9 @@ function setStrcutureMode(mode) {
         case "queue":
             initQueueMode();
             break;
+        case "linkedList":
+            initLinkedListMode();
+            break;
     }
 }
 function removeAllChildNodes(parent) {

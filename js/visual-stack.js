@@ -7,7 +7,7 @@ function initStackMode() {
     pushButton.className = "push-button";
     pushButton.innerText = "push";
     pushButton.addEventListener("click", () => {
-        runPush(stack, cnt++);
+        cnt = runPush(stack, cnt) !== null ? cnt + 1 : cnt;
     });
     let popButton = document.createElement("button");
     popButton.className = "pop-button";
@@ -40,6 +40,7 @@ function runPush(stack, data) {
         };
         newElement.animate(keyframes, options);
     }
+    return res;
 }
 function runPop(stack) {
     let res = stack.pop();

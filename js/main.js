@@ -1,5 +1,4 @@
 "use strict";
-const SCALE_SIZE = 2;
 let strucutreMode = "queue";
 window.onload = () => {
     setStrcutureMode(strucutreMode, true);
@@ -17,6 +16,9 @@ window.onload = () => {
     };
     document.querySelector(".index.binary-search-tree").onclick = () => {
         setStrcutureMode("binary-search-tree");
+    };
+    document.querySelector(".index.priority-queue").onclick = () => {
+        setStrcutureMode("priority-queue");
     };
 };
 function setStrcutureMode(mode, force = false) {
@@ -43,25 +45,19 @@ function setStrcutureMode(mode, force = false) {
         case "thread-binary-tree":
             initThreadBinaryTreeMode();
             break;
+        case "binary-search-tree":
+            initBinarySearchTreeMode();
+            break;
+        case "priority-queue":
+            initPriorityQueueMode();
+            break;
     }
     const backCanvas = document.querySelector(".back-canvas");
     const ctx = backCanvas.getContext("2d");
-    ctx.clearRect(0, 0, 600 * SCALE_SIZE, 400 * SCALE_SIZE);
+    ctx.clearRect(0, 0, 1100 * SCALE_SIZE, 500 * SCALE_SIZE);
 }
-function removeAllChildNodes(parent) {
-    while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
-    }
+function clearCanvas() {
     const backCanvas = document.querySelector(".back-canvas");
     const ctx = backCanvas.getContext("2d");
-    ctx.clearRect(0, 0, 600 * SCALE_SIZE, 400 * SCALE_SIZE);
-}
-function createButton(text, onClick, className) {
-    if (className === undefined)
-        className = text + "-button";
-    let button = document.createElement("button");
-    button.className = className;
-    button.innerText = text;
-    button.addEventListener("click", onClick);
-    return button;
+    ctx.clearRect(0, 0, backCanvas.width, backCanvas.height);
 }

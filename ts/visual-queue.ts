@@ -8,7 +8,7 @@ function initQueueMode() {
   enqueueButton.className = "enqueue-button";
   enqueueButton.innerText = "enqueue";
   enqueueButton.addEventListener("click", () => {
-    runEnqueue(queue, cnt++);
+    cnt = runEnqueue(queue, cnt) !== null ? cnt + 1 : cnt;
   })
 
   let dequeueButton = document.createElement("button");
@@ -35,7 +35,7 @@ function initQueueMode() {
   (document.querySelector(".canvas") as HTMLDivElement).appendChild(queueNodesContainer);
 }
 
-function runEnqueue(queue: Queue, data: number): void {
+function runEnqueue(queue: Queue, data: number) {
   let res = queue.enqueue(data % 100 + 1);
   if (res !== null) {
     applyQueueView(queue);
@@ -51,6 +51,7 @@ function runEnqueue(queue: Queue, data: number): void {
     }
     newElement.animate(keyframes, options)
   }
+  return res;
 }
 
 function runDequeue(queue: Queue): void {

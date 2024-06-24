@@ -1,3 +1,6 @@
+
+
+
 function initLinkedListMode() {
   let list = new LinkedList<number>();
   let cnt = 1;

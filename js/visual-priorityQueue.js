@@ -1,36 +1,44 @@
 "use strict";
-function initThreadBinaryTreeMode() {
-    let tree = new ThreadBinaryTree();
+function initPriorityQueueMode() {
+    let tree = new Heap();
     let cnt = 1;
     const canvas = document.querySelector(".canvas");
-    canvas.className = "canvas tbt-canvas";
+    canvas.className = "canvas pq-canvas";
     let insertButton = createButton("insert", () => {
-        runInsertTBT(tree, cnt++);
-    });
-    let initButton = createButton("init", () => {
-        clearCanvas();
-        removeAllChildNodes(canvas);
-        tree.init();
+        runInsertPQ(tree, cnt++);
     });
     let insertCustomButton = createButton("insert(n)", () => {
         let num = 0;
         while (num === 0) {
             num = Number(prompt("삽입할 노드의 키를 입력하세요 (1~)"));
         }
-        runInsertTBT(tree, num);
+        runInsertPQ(tree, num);
+    });
+    let deleteButton = createButton("delete", () => {
+        runDeletePQ(tree);
+    });
+    let initButton = createButton("init", () => {
+        clearCanvas();
+        removeAllChildNodes(canvas);
+        tree.init();
     });
     let commandListDiv = document.querySelector(".command-list");
-    commandListDiv.append(insertButton, insertCustomButton, initButton);
-    applyThreadBinaryTreeView(tree);
+    commandListDiv.append(insertButton, insertCustomButton, deleteButton, initButton);
+    applyPriorityQueueView(tree);
 }
-function runInsertTBT(tree, key) {
+function runInsertPQ(tree, key) {
     if (tree.size >= 31) {
         return;
     }
-    let res = tree.insert(key);
-    applyThreadBinaryTreeView(tree);
+    let res = tree.insert(Math.floor(Math.random() * 100) + 1);
+    applyPriorityQueueView(tree);
 }
-function applyThreadBinaryTreeView(tree) {
+function runDeletePQ(tree) {
+    let res = tree.delete();
+    applyPriorityQueueView(tree);
+    return res;
+}
+function applyPriorityQueueView(tree) {
     const canvas = document.querySelector(".canvas");
     const backCanvas = document.querySelector(".back-canvas");
     const ctx = backCanvas.getContext("2d");
@@ -38,27 +46,22 @@ function applyThreadBinaryTreeView(tree) {
     ctx.lineWidth = 4 * SCALE_SIZE;
     // ctx.strokeStyle = "black";
     removeAllChildNodes(canvas);
-    const queue = [tree.root];
     let left = 0;
     let level = 0;
     let levelContainer = document.createElement("div");
     levelContainer.className = "level-nodes-container level-" + level.toString();
     const levelContainers = [];
-    while (queue.length > 0) {
-        const cur = queue.shift();
-        if (cur === null)
-            break;
+    for (let i = 1; i <= tree.size; i++) {
         const nodeContainer = document.createElement("div");
         nodeContainer.className = "node-container";
         const treeNode = document.createElement("img");
         treeNode.src = "../res/svgs/tree-node.svg";
         const keyElement = document.createElement("span");
         keyElement.className = "key";
-        keyElement.innerText = cur.key.toString();
+        keyElement.innerText = tree.items[i].toString();
         nodeContainer.append(treeNode, keyElement);
         levelContainer.appendChild(nodeContainer);
-        if (cur.left) {
-            queue.push(cur.left);
+        if (i * 2 <= tree.size) {
             let [x1, y1] = getNodeCoord(level, left);
             let [x2, y2] = getNodeCoord(level + 1, left * 2);
             ctx.strokeStyle = "#000000";
@@ -69,8 +72,7 @@ function applyThreadBinaryTreeView(tree) {
             ctx.stroke();
             ctx.closePath();
         }
-        if (cur.right && !cur.isThread) {
-            queue.push(cur.right);
+        if (i * 2 + 1 <= tree.size) {
             let [x1, y1] = getNodeCoord(level, left);
             let [x2, y2] = getNodeCoord(level + 1, left * 2 + 1);
             ctx.strokeStyle = "#000000";
@@ -78,19 +80,6 @@ function applyThreadBinaryTreeView(tree) {
             ctx.setLineDash([]);
             ctx.moveTo(x1 * SCALE_SIZE, y1 * SCALE_SIZE);
             ctx.lineTo(x2 * SCALE_SIZE, y2 * SCALE_SIZE);
-            ctx.stroke();
-            ctx.closePath();
-        }
-        if (cur.isThread && cur.right) {
-            let [x1, y1] = getNodeCoord(level, left);
-            let [level2, left2] = tree.getPos(cur.right.key);
-            let [x2, y2] = getNodeCoord(level2, left2);
-            let cx = x2;
-            let cy = y1;
-            ctx.beginPath();
-            ctx.setLineDash([8, 4]);
-            ctx.moveTo(x1 * SCALE_SIZE, y1 * SCALE_SIZE);
-            ctx.quadraticCurveTo(cx * SCALE_SIZE, cy * SCALE_SIZE, x2 * SCALE_SIZE, y2 * SCALE_SIZE);
             ctx.stroke();
             ctx.closePath();
         }

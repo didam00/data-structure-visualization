@@ -1,5 +1,5 @@
 class Stack {
-  static readonly MAX_SIZE: number = 10;
+  static readonly MAX_SIZE: number = 13;
   items: Int32Array;
   top: number;
 
@@ -34,7 +34,7 @@ class Stack {
 }
 
 class Queue {
-  static readonly MAX_SIZE: number = 8;
+  static readonly MAX_SIZE: number = 16;
   items: Int32Array;
   front: number;
   rear: number;
@@ -191,6 +191,11 @@ class ThreadBinaryTree<T> {
   root: ThreadBinaryTree.Node<T> | null = null;
   size: number = 0;
 
+  init(): void {
+    this.root = null;
+    this.size = 0;
+  }
+
   // 완전 이진 트리를 유지하며 삽입
   insert(key: T) {
     const newNode = new ThreadBinaryTree.Node(key);
@@ -332,8 +337,14 @@ class BinarySearchTree {
   root: BinarySearchTree.Node | null = null;
   size: number = 0;
 
+  init(): void {
+    this.root = null;
+    this.size = 0;
+  }
+
   private __insertNode(node: BinarySearchTree.Node | null, key: number): BinarySearchTree.Node | null {
     if (node === null) {
+      this.size++;
       let newNode = new BinarySearchTree.Node(key);
       return newNode
     }
@@ -347,8 +358,92 @@ class BinarySearchTree {
     return node;
   }
 
-  insert(key: number) {
+  insert(key: number): boolean {
+    let bfSize = this.size;
     this.root = this.__insertNode(this.root, key);
+    return !(bfSize === this.size);
+  }
+
+  inserts(...keys: number[]) {
+    for (let key of keys) {
+      this.insert(key);
+    }
+  }
+
+  delete(key: number, node: BinarySearchTree.Node | null = this.root): BinarySearchTree.Node | null {
+    if (node === null) {
+      return null;
+    }
+  
+    if (key < node.key) {
+      node.left = this.delete(key, node.left);
+    } else if (key > node.key) {
+      node.right = this.delete(key, node.right);
+    } else {
+      if (node.left === null) {
+        return node.right;
+      } else if (node.right === null) {
+        return node.left;
+      }
+  
+      // 두 개의 자식이 있는 경우
+      node.key = this.minKey(node.right);
+      node.right = this.delete(node.key, node.right);
+    }
+  
+    return node;
+  }
+
+  minKey(node: BinarySearchTree.Node): number {
+    let minv = node.key;
+    while (node.left !== null) {
+      minv = node.left.key;
+      node = node.left;
+    }
+    return minv;
+  }
+  
+  
+  isFull(): boolean {
+    return Math.log2(this.size + 1) % 1 == 0;
+  }
+  
+  getPos(key: number): [number, number] {
+    if (this.root === null) return [-1, -1];
+
+    let node: BinarySearchTree.Node | null = this.root;
+    let level = 0;
+    let left = 0;
+
+    // 이진 탐색 트리이기에 탐색하며 레벨을 한 칸씩 높이고, (왼쪽, 오른쪽 = +0, +1) 이 성립된다.
+    while (node !== null) {
+      if (key === node.key) {
+        return [level, left];
+      }
+      if (key < node.key) {
+        node = node.left;
+        level++;
+        left = left * 2;
+        continue;
+      }
+      if (key > node.key) {
+        node = node.right;
+        level++;
+        left = left * 2 + 1;
+        continue;
+      }
+    }
+    
+    return [-1, -1];
+  }
+
+  getHeight(node: BinarySearchTree.Node | null = this.root): number {
+    if (node === null) {
+      return 0;
+    }
+    const leftHeight = this.getHeight(node.left);
+    const rightHeight = this.getHeight(node.right);
+    return Math.max(leftHeight, rightHeight) + 1;
   }
 }
 
@@ -361,5 +456,77 @@ namespace BinarySearchTree {
     constructor (key: number) {
       this.key = key;
     }
+  }
+}
+
+/** Min Heap */
+class Heap {
+  static readonly MAX_SIZE: number = 31;
+  items: number[] = new Array(Heap.MAX_SIZE + 1).fill(0);
+  size: number = 0;
+  
+  init() {
+    this.items = new Array(Heap.MAX_SIZE + 1).fill(0);
+    this.size = 0;
+  }
+
+  insert(key: number) {
+    if (this.size === Heap.MAX_SIZE) return false;
+
+    this.size++;
+    let cur: number = this.size; // 마지막 위치
+    this.items[cur] = key;
+
+    let par = Math.floor(cur / 2);
+
+    while (cur > 1 && this.items[par] > this.items[cur]) {
+      [this.items[par], this.items[cur]] = [this.items[cur], this.items[par]];
+      cur = par;
+      par = Math.floor(par / 2);
+    }
+
+    return true;
+  }
+
+  inserts(...keys: number[]) {
+    for (let key of keys) {
+      this.insert(key);
+    }
+  }
+
+  delete() {
+    if (this.size <= 0) return -1;
+
+    const min = this.items[1];
+    this.items[1] = this.items[this.size];
+    this.size--;
+
+    this.heapify(1);
+
+    return min;
+  }
+
+  heapify(pos: number) {
+    const left = 2 * pos;
+    const right = 2 * pos + 1;
+    let min = pos;
+
+    if (left <= this.size && this.items[left] < this.items[min]) {
+      min = left;
+    }
+
+    if (right <= this.size && this.items[right] < this.items[min]) {
+      min = right;
+    }
+
+    // 현재 노드가 자식 노드보다 크면 위치를 바꿈
+    if (min !== pos) {
+      [this.items[pos], this.items[min]] = [this.items[min], this.items[pos]];
+      this.heapify(min);
+    }
+  }
+
+  isFull(): boolean {
+    return Math.log2(this.size + 1) % 1 == 0;
   }
 }

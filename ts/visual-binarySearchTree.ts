@@ -1,12 +1,11 @@
-function initThreadBinaryTreeMode() {
-  let tree = new ThreadBinaryTree<number>();
-  let cnt = 1;
+function initBinarySearchTreeMode() {
+  let tree = new BinarySearchTree();
   const canvas = document.querySelector(".canvas") as HTMLCanvasElement;
 
-  canvas.className = "canvas tbt-canvas";
+  canvas.className = "canvas bst-canvas";
 
   let insertButton = createButton("insert", () => {
-    runInsertTBT(tree, cnt++);
+    runInsertBST(tree);
   })
   let initButton = createButton("init", () => {
     clearCanvas();
@@ -20,43 +19,62 @@ function initThreadBinaryTreeMode() {
       num = Number(prompt("삽입할 노드의 키를 입력하세요 (1~)"));
     }
 
-    runInsertTBT(tree, num);
+    runInsertBST(tree, num);
   })
 
   let commandListDiv = document.querySelector(".command-list") as HTMLDivElement;
   commandListDiv.append(insertButton, insertCustomButton, initButton);
 
-  applyThreadBinaryTreeView(tree);
+  applyBinarySearchTreeView(tree);
 }
 
-function runInsertTBT(tree: ThreadBinaryTree<number>, key: number) {
-  if (tree.size >= 31) {
+function runInsertBST(tree: BinarySearchTree, num?: number) {
+  if (num != undefined) {
+    tree.insert(num);
+    applyBinarySearchTreeView(tree);
     return;
   }
-  let res = tree.insert(key);
-  applyThreadBinaryTreeView(tree);
+
+  let onLoop: boolean = true;
+  let count: number = 0;
+  let allowFloat: number = 1;
+  
+  while (onLoop && count < 2000) {
+    let key = Math.floor(Math.random()*99 * allowFloat) / allowFloat + 1;
+    let notCollapse = tree.insert(key);
+
+    if (tree.getHeight() >= 6) {
+      tree.delete(key);
+    } else if (notCollapse) {
+      onLoop = false;
+    }
+
+    count++;
+
+    if (count == 100) allowFloat *= 10;
+  }
+
+  if (count >= 1000) alert("더 이상 넣을 수 있는 노드가 없습니다.")
+  applyBinarySearchTreeView(tree);
 }
 
-function applyThreadBinaryTreeView(tree: ThreadBinaryTree<number>) {
+function applyBinarySearchTreeView(tree: BinarySearchTree) {
   const canvas = document.querySelector(".canvas") as HTMLDivElement;
   const backCanvas = document.querySelector(".back-canvas") as HTMLCanvasElement;
   const ctx = backCanvas.getContext("2d")!;
-  clearCanvas();
+  ctx.clearRect(0, 0, backCanvas.width, backCanvas.height);
   ctx.lineWidth = 4 * SCALE_SIZE;
   // ctx.strokeStyle = "black";
 
   removeAllChildNodes(canvas);
   
-  const queue: Array<ThreadBinaryTree.Node<number> | null> = [tree.root];
-  let left: number = 0;
-  let level: number = 0;
-  let levelContainer: HTMLDivElement = document.createElement("div");
-  levelContainer.className = "level-nodes-container level-" + level.toString();
-  const levelContainers: HTMLDivElement[] = []
+  const queue: Array<BinarySearchTree.Node | null> = [tree.root];
   
   while (queue.length > 0) {
-    const cur = queue.shift()!;
-    if (cur === null) break;
+    const cur = queue.shift();
+    if (cur === null || cur === undefined) break;
+
+    const [level, left] = tree.getPos(cur.key);
 
     const nodeContainer = document.createElement("div");
     nodeContainer.className = "node-container";
@@ -69,7 +87,11 @@ function applyThreadBinaryTreeView(tree: ThreadBinaryTree<number>) {
     keyElement.innerText = cur.key.toString();
   
     nodeContainer.append(treeNode, keyElement);
-    levelContainer.appendChild(nodeContainer);
+    const [nodeX, nodeY] = getNodeCoord(level, left);
+    
+    nodeContainer.style.top = (nodeY - 32) + "px"
+    nodeContainer.style.left = (nodeX - 32) + "px";
+    canvas.appendChild(nodeContainer);
 
     if (cur.left) {
       queue.push(cur.left);
@@ -84,7 +106,7 @@ function applyThreadBinaryTreeView(tree: ThreadBinaryTree<number>) {
       ctx.stroke();
       ctx.closePath();
     }
-    if (cur.right && !cur.isThread) {
+    if (cur.right) {
       queue.push(cur.right);
       let [x1, y1] = getNodeCoord(level, left);
       let [x2, y2] = getNodeCoord(level+1, left*2+1);
@@ -97,41 +119,5 @@ function applyThreadBinaryTreeView(tree: ThreadBinaryTree<number>) {
       ctx.stroke();
       ctx.closePath();
     }
-    if (cur.isThread && cur.right) {
-      let [x1, y1] = getNodeCoord(level, left);
-      let [level2, left2] = tree.getPos(cur.right.key);
-
-      let [x2, y2] = getNodeCoord(level2, left2);
-      let cx = x2;
-      let cy = y1;
-
-      ctx.beginPath();
-      ctx.setLineDash([8, 4]);
-      ctx.moveTo(x1 * SCALE_SIZE, y1 * SCALE_SIZE);
-      ctx.quadraticCurveTo(cx * SCALE_SIZE, cy * SCALE_SIZE, x2 * SCALE_SIZE, y2 * SCALE_SIZE);
-      ctx.stroke();
-      ctx.closePath();
-    }
-
-    left++;
-    // 각 레벨의 끝에서 level + 1
-    if (left == 2 ** level) {
-      level++;
-      left = 0;
-      levelContainers.push(levelContainer);
-
-      levelContainer = document.createElement("div");
-      levelContainer.className = "level-nodes-container level-" + level.toString();
-    }
   }
-  if (!tree.isFull()) {
-    for (let i = left; i < 2 ** level; i++) {
-      let noneNode = document.createElement("div")!;
-      noneNode.className = "none-node";
-      levelContainer.appendChild(noneNode);
-    }
-    levelContainers.push(levelContainer);
-  }
-
-  canvas.append(...levelContainers);
 }

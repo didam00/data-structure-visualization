@@ -1,11 +1,10 @@
-const SCALE_SIZE = 2;
-
 type StrucutreMode
   = "stack" 
   | "queue" 
   | "linked-list" 
   | "thread-binary-tree" 
-  | "binary-search-tree";
+  | "binary-search-tree"
+  | "priority-queue";
   
 let strucutreMode: StrucutreMode = "queue";
 
@@ -27,6 +26,9 @@ window.onload = () => {
   (document.querySelector(".index.binary-search-tree") as HTMLDivElement).onclick = () => {
     setStrcutureMode("binary-search-tree");
   }
+  (document.querySelector(".index.priority-queue") as HTMLDivElement).onclick = () => {
+    setStrcutureMode("priority-queue");
+  }
 }
 
 function setStrcutureMode(mode: StrucutreMode, force: boolean = false) {
@@ -47,30 +49,17 @@ function setStrcutureMode(mode: StrucutreMode, force: boolean = false) {
     case "queue" : initQueueMode(); break;
     case "linked-list" : initLinkedListMode(); break;
     case "thread-binary-tree" : initThreadBinaryTreeMode(); break;
-    // case "binary-search-tree" : initThreadBinaryTreeMode(); break;
+    case "binary-search-tree" : initBinarySearchTreeMode(); break;
+    case "priority-queue" : initPriorityQueueMode(); break;
   }
 
   const backCanvas = document.querySelector(".back-canvas") as HTMLCanvasElement;
   const ctx = backCanvas.getContext("2d")!;
-  ctx.clearRect(0, 0, 600 * SCALE_SIZE, 400 * SCALE_SIZE);
+  ctx.clearRect(0, 0, 1100 * SCALE_SIZE, 500 * SCALE_SIZE);
 }
 
-function removeAllChildNodes(parent: HTMLElement): void {
-  while (parent.firstChild) {
-    parent.removeChild(parent.firstChild);
-  }
-
+function clearCanvas() {
   const backCanvas = document.querySelector(".back-canvas") as HTMLCanvasElement;
   const ctx = backCanvas.getContext("2d")!;
-  ctx.clearRect(0, 0, 600 * SCALE_SIZE, 400 * SCALE_SIZE);
-}
-
-function createButton(text: string, onClick: () => void, className?: string): HTMLButtonElement {
-  if (className === undefined) className = text + "-button";
-
-  let button = document.createElement("button");
-  button.className = className;
-  button.innerText = text;
-  button.addEventListener("click", onClick);
-  return button;
+  ctx.clearRect(0, 0, backCanvas.width, backCanvas.height);
 }

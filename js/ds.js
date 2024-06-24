@@ -26,7 +26,7 @@ class Stack {
         return this.items[this.top--];
     }
 }
-Stack.MAX_SIZE = 10;
+Stack.MAX_SIZE = 13;
 class Queue {
     constructor() {
         this.items = new Int32Array(Queue.MAX_SIZE);
@@ -54,7 +54,7 @@ class Queue {
         return this.items[++this.front];
     }
 }
-Queue.MAX_SIZE = 8;
+Queue.MAX_SIZE = 16;
 class LinkedList {
     constructor() {
         this.head = null;
@@ -158,6 +158,10 @@ class ThreadBinaryTree {
         this.root = null;
         this.size = 0;
     }
+    init() {
+        this.root = null;
+        this.size = 0;
+    }
     // 완전 이진 트리를 유지하며 삽입
     insert(key) {
         const newNode = new ThreadBinaryTree.Node(key);
@@ -244,7 +248,7 @@ class ThreadBinaryTree {
         const queue = [this.root];
         while (queue.length > 0) {
             left++;
-            if (left == 2 ** level) {
+            if (left == Math.pow(2, level)) {
                 level++;
                 left = 0;
             }
@@ -272,19 +276,177 @@ class ThreadBinaryTree {
     }
     ThreadBinaryTree.Node = Node;
 })(ThreadBinaryTree || (ThreadBinaryTree = {}));
-// class BinarySearchTree<T> {
-//   root: ThreadBinaryTree.Node<T> | null = null;
-//   size: number = 0;
-//   insert() {
-//   }
-// }
-// namespace BinarySearchTree {
-//   export class Node<T> {
-//     key: T;
-//     left: Node<T> | null = null;
-//     right: Node<T> | null = null;
-//     constructor (key: T) {
-//       this.key = key;
-//     }
-//   }
-// }
+class BinarySearchTree {
+    constructor() {
+        this.root = null;
+        this.size = 0;
+    }
+    init() {
+        this.root = null;
+        this.size = 0;
+    }
+    __insertNode(node, key) {
+        if (node === null) {
+            this.size++;
+            let newNode = new BinarySearchTree.Node(key);
+            return newNode;
+        }
+        if (node.key > key) {
+            node.left = this.__insertNode(node.left, key);
+        }
+        else if (node.key < key) {
+            node.right = this.__insertNode(node.right, key);
+        }
+        else {
+            // 중복 데이터
+        }
+        return node;
+    }
+    insert(key) {
+        let bfSize = this.size;
+        this.root = this.__insertNode(this.root, key);
+        return !(bfSize === this.size);
+    }
+    inserts(...keys) {
+        for (let key of keys) {
+            this.insert(key);
+        }
+    }
+    delete(key, node = this.root) {
+        if (node === null) {
+            return null;
+        }
+        if (key < node.key) {
+            node.left = this.delete(key, node.left);
+        }
+        else if (key > node.key) {
+            node.right = this.delete(key, node.right);
+        }
+        else {
+            if (node.left === null) {
+                return node.right;
+            }
+            else if (node.right === null) {
+                return node.left;
+            }
+            // 두 개의 자식이 있는 경우
+            node.key = this.minKey(node.right);
+            node.right = this.delete(node.key, node.right);
+        }
+        return node;
+    }
+    minKey(node) {
+        let minv = node.key;
+        while (node.left !== null) {
+            minv = node.left.key;
+            node = node.left;
+        }
+        return minv;
+    }
+    isFull() {
+        return Math.log2(this.size + 1) % 1 == 0;
+    }
+    getPos(key) {
+        if (this.root === null)
+            return [-1, -1];
+        let node = this.root;
+        let level = 0;
+        let left = 0;
+        // 이진 탐색 트리이기에 탐색하며 레벨을 한 칸씩 높이고, (왼쪽, 오른쪽 = +0, +1) 이 성립된다.
+        while (node !== null) {
+            if (key === node.key) {
+                return [level, left];
+            }
+            if (key < node.key) {
+                node = node.left;
+                level++;
+                left = left * 2;
+                continue;
+            }
+            if (key > node.key) {
+                node = node.right;
+                level++;
+                left = left * 2 + 1;
+                continue;
+            }
+        }
+        return [-1, -1];
+    }
+    getHeight(node = this.root) {
+        if (node === null) {
+            return 0;
+        }
+        const leftHeight = this.getHeight(node.left);
+        const rightHeight = this.getHeight(node.right);
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+}
+(function (BinarySearchTree) {
+    class Node {
+        constructor(key) {
+            this.left = null;
+            this.right = null;
+            this.key = key;
+        }
+    }
+    BinarySearchTree.Node = Node;
+})(BinarySearchTree || (BinarySearchTree = {}));
+/** Min Heap */
+class Heap {
+    constructor() {
+        this.items = new Array(Heap.MAX_SIZE + 1).fill(0);
+        this.size = 0;
+    }
+    init() {
+        this.items = new Array(Heap.MAX_SIZE + 1).fill(0);
+        this.size = 0;
+    }
+    insert(key) {
+        if (this.size === Heap.MAX_SIZE)
+            return false;
+        this.size++;
+        let cur = this.size; // 마지막 위치
+        this.items[cur] = key;
+        let par = Math.floor(cur / 2);
+        while (cur > 1 && this.items[par] > this.items[cur]) {
+            [this.items[par], this.items[cur]] = [this.items[cur], this.items[par]];
+            cur = par;
+            par = Math.floor(par / 2);
+        }
+        return true;
+    }
+    inserts(...keys) {
+        for (let key of keys) {
+            this.insert(key);
+        }
+    }
+    delete() {
+        if (this.size <= 0)
+            return -1;
+        const min = this.items[1];
+        this.items[1] = this.items[this.size];
+        this.size--;
+        this.heapify(1);
+        return min;
+    }
+    heapify(pos) {
+        const left = 2 * pos;
+        const right = 2 * pos + 1;
+        let min = pos;
+        if (left <= this.size && this.items[left] < this.items[min]) {
+            min = left;
+        }
+        if (right <= this.size && this.items[right] < this.items[min]) {
+            min = right;
+        }
+        // 현재 노드가 자식 노드보다 크면 위치를 바꿈
+        if (min !== pos) {
+            [this.items[pos], this.items[min]] = [this.items[min], this.items[pos]];
+            this.heapify(min);
+        }
+    }
+    isFull() {
+        return Math.log2(this.size + 1) % 1 == 0;
+    }
+}
+Heap.MAX_SIZE = 31;

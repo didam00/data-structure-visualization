@@ -7,7 +7,7 @@ function initQueueMode() {
     enqueueButton.className = "enqueue-button";
     enqueueButton.innerText = "enqueue";
     enqueueButton.addEventListener("click", () => {
-        runEnqueue(queue, cnt++);
+        cnt = runEnqueue(queue, cnt) !== null ? cnt + 1 : cnt;
     });
     let dequeueButton = document.createElement("button");
     dequeueButton.className = "dequeue-button";
@@ -43,6 +43,7 @@ function runEnqueue(queue, data) {
         };
         newElement.animate(keyframes, options);
     }
+    return res;
 }
 function runDequeue(queue) {
     let res = queue.dequeue();

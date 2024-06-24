@@ -8,7 +8,7 @@ function initStackMode() {
   pushButton.className = "push-button";
   pushButton.innerText = "push";
   pushButton.addEventListener("click", () => {
-    runPush(stack, cnt++);
+    cnt = runPush(stack, cnt) !== null ? cnt + 1 : cnt;
   })
 
   let popButton = document.createElement("button");
@@ -30,13 +30,13 @@ function initStackMode() {
   commandListDiv.append(pushButton, popButton, initButton);
 }
 
-function runPush(stack: Stack, data: number): void {
+function runPush(stack: Stack, data: number) {
   let res = stack.push(data % 100 + 1);
   if (res !== null) {
     applyStackView(stack);
     const canvas = document.querySelector(".canvas") as HTMLDivElement;
     const newElement = canvas.querySelector(".stack-container:last-child") as HTMLDivElement;
-
+    
     const keyframes: PropertyIndexedKeyframes = {
       translate: ["-2rem 0", "0 0"]
     }
@@ -46,6 +46,7 @@ function runPush(stack: Stack, data: number): void {
     }
     newElement.animate(keyframes, options)
   }
+  return res;
 }
 
 function runPop(stack: Stack): void {

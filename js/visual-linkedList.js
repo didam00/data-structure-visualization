@@ -4,28 +4,10 @@ function initLinkedListMode() {
     let cnt = 1;
     let delCnt = 1;
     document.querySelector(".canvas").className = "canvas list-canvas";
-    let appendButton = document.createElement("button");
-    appendButton.className = "append-button";
-    appendButton.innerText = "append";
-    appendButton.addEventListener("click", () => {
-        runAppend(list, cnt++);
-    });
-    let prependButton = document.createElement("button");
-    prependButton.className = "prepend-button";
-    prependButton.innerText = "prepend";
-    prependButton.addEventListener("click", () => {
-        runPrepend(list, cnt++);
-    });
-    let deleteButton = document.createElement("button");
-    deleteButton.className = "delete-button";
-    deleteButton.innerText = "delete";
-    deleteButton.addEventListener("click", () => {
-        runDelete(list, delCnt++);
-    });
-    let initButton = document.createElement("button");
-    initButton.className = "init-button";
-    initButton.innerText = "init";
-    initButton.addEventListener("click", () => {
+    let appendButton = createButton("append", () => runAppend(list, cnt++));
+    let prependButton = createButton("prepend", () => runPrepend(list, cnt++));
+    let deleteButton = createButton("delete", () => runDelete(list, delCnt++));
+    let initButton = createButton("init", () => () => {
         runInitList(list);
         cnt = 1;
         delCnt = 1;

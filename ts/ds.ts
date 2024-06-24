@@ -1,5 +1,5 @@
 class Stack {
-  static readonly MAX_SIZE: number = 8;
+  static readonly MAX_SIZE: number = 10;
   items: Int32Array;
   top: number;
 
@@ -68,8 +68,6 @@ class Queue {
     return this.items[++this.front];
   }
 }
-
-
 
 class LinkedList<T> {
   head: LinkedList.Node<T> | null = null;
@@ -184,6 +182,183 @@ namespace LinkedList {
     next: Node<T> | null = null;
 
     constructor(key: T) {
+      this.key = key;
+    }
+  }
+}
+
+class ThreadBinaryTree<T> {
+  root: ThreadBinaryTree.Node<T> | null = null;
+  size: number = 0;
+
+  // 완전 이진 트리를 유지하며 삽입
+  insert(key: T) {
+    const newNode = new ThreadBinaryTree.Node(key);
+    this.size++;
+
+    if (this.root === null) {
+      this.root = newNode;
+      newNode.isThread = false;
+      return;
+    }
+
+    const queue: Array<ThreadBinaryTree.Node<T>> = [this.root];
+
+    while (queue.length > 0) {
+      let cur = queue.shift()!;
+
+      if (cur.left === null) {
+        cur.left = newNode;
+        // cur.right = null;
+        // 왼쪽 자식은 스레드를 부모 노드를 가리킨다
+        newNode.right = cur;
+
+        return;
+      } else {
+        queue.push(cur.left);
+      }
+
+      // 오른쪽이 스레드이거나 null이라면 단말노드
+      if (cur.isThread || cur.right === null) {
+        // 이땐 스레드가 가리키는 것을 newNode가 받고 스레드 제거
+        newNode.right = cur.right;
+        // 만약 부모노드가 isThread가 false였다 = 가장 우측 노드
+        // 그 노드의 오른쪽 자식이다 = 마찬가지로 가장 우측 노드
+        newNode.isThread = cur.isThread;
+        cur.isThread = false;
+        cur.right = newNode;
+
+        return;
+      } else {
+        queue.push(cur.right);
+      }
+    }
+  }
+
+  inserts(...keys: T[]) {
+    for (let key of keys) {
+      this.insert(key);
+    }
+  }
+
+  // 어차피 완전 이진 트리라 좌측으로만 내려가도 됨
+  getHeight(): number {
+    const findMaxDepth = (node: ThreadBinaryTree.Node<T> | null): number => {
+      if (node == null) {
+        return 0;
+      }
+      return 1 + findMaxDepth(node.left || null);
+    }
+
+    return findMaxDepth(this.root);
+  }
+
+  isFull(): boolean {
+    return Math.log2(this.size + 1) % 1 == 0;
+  }
+
+  findSuccessor(node: ThreadBinaryTree.Node<T>) {
+    let right = node.right;
+    if (right === null || node.isThread) return right;
+    while (right.left != null) right = right.left;
+
+    return right;
+  }
+
+  order(): ThreadBinaryTree.Node<T>[] {
+    let node = this.root;
+    let result: ThreadBinaryTree.Node<T>[] = [];
+    if (node == null) return result;
+
+    // 가장 왼쪽 노드로 이동
+    while (node.left != null) node = node.left;
+
+    do {
+      result.push(node);
+      node = this.findSuccessor(node);
+    } while (node != null);
+
+    return result;
+  }
+
+  getPos(key: number): [number, number] {
+    let level = 0;
+    let left = -1;
+
+    if (this.root === null) return [-1, -1];
+
+    const queue: Array<ThreadBinaryTree.Node<T>> = [this.root];
+    
+    while (queue.length > 0) {
+      left++;
+
+      if (left == 2 ** level) {
+        level++;
+        left = 0;
+      }
+
+      let cur = queue.shift()!;
+      if (cur.key === key) return [level, left];
+
+
+      if (cur.left != null) {
+        queue.push(cur.left);
+      }
+
+      if (!cur.isThread && cur.right != null) {
+        queue.push(cur.right!);
+      }
+    }
+    
+    return [-1, -1];
+  }
+}
+
+namespace ThreadBinaryTree {
+  export class Node<T> {
+    key: T;
+    left: Node<T> | null = null;
+    right: Node<T> | null = null;
+    isThread: boolean;
+
+    constructor (key: T) {
+      this.key = key;
+      this.isThread = true;
+    }
+  }
+}
+
+class BinarySearchTree {
+  root: BinarySearchTree.Node | null = null;
+  size: number = 0;
+
+  private __insertNode(node: BinarySearchTree.Node | null, key: number): BinarySearchTree.Node | null {
+    if (node === null) {
+      let newNode = new BinarySearchTree.Node(key);
+      return newNode
+    }
+    if (node.key > key) {
+      node.left = this.__insertNode(node.left, key);
+    } else if (node.key < key) {
+      node.right = this.__insertNode(node.right, key);
+    } else {
+      // 중복 데이터
+    }
+    return node;
+  }
+
+  insert(key: number) {
+    this.root = this.__insertNode(this.root, key);
+  }
+}
+
+namespace BinarySearchTree {
+  export class Node {
+    key: number;
+    left: Node | null = null;
+    right: Node | null = null;
+
+    constructor (key: number) {
       this.key = key;
     }
   }

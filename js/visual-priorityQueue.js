@@ -1,11 +1,11 @@
 "use strict";
 function initPriorityQueueMode() {
     let tree = new Heap();
-    let cnt = 1;
     const canvas = document.querySelector(".canvas");
     canvas.className = "canvas pq-canvas";
     let insertButton = createButton("insert", () => {
-        runInsertPQ(tree, cnt++);
+        let key = Math.floor(Math.random() * 100) + 1;
+        runInsertPQ(tree, key);
     });
     let insertCustomButton = createButton("insert(n)", () => {
         let num = 0;
@@ -18,9 +18,17 @@ function initPriorityQueueMode() {
         runDeletePQ(tree);
     });
     let initButton = createButton("init", () => {
-        clearCanvas();
-        removeAllChildNodes(canvas);
-        tree.init();
+        let i = 0;
+        let size = tree.size;
+        let loop = setInterval(() => {
+            if (i >= size) {
+                console.log(i);
+                clearInterval(loop);
+                tree.init();
+            }
+            runDeletePQ(tree);
+            i++;
+        }, 20);
     });
     let commandListDiv = document.querySelector(".command-list");
     commandListDiv.append(insertButton, insertCustomButton, deleteButton, initButton);
@@ -30,7 +38,7 @@ function runInsertPQ(tree, key) {
     if (tree.size >= 31) {
         return;
     }
-    let res = tree.insert(Math.floor(Math.random() * 100) + 1);
+    let res = tree.insert(key);
     applyPriorityQueueView(tree);
 }
 function runDeletePQ(tree) {

@@ -101,11 +101,11 @@ class LinkedList {
     }
     delete(key) {
         if (this.head === null) {
-            return;
+            return false;
         }
         if (this.head.key === key) {
             this.head = this.head.next;
-            return;
+            return true;
         }
         let cur = this.head;
         while (cur.next !== null && cur.next.key !== key) {
@@ -113,7 +113,9 @@ class LinkedList {
         }
         if (cur.next !== null) {
             cur.next = cur.next.next;
+            return true;
         }
+        return false;
     }
     find(key) {
         let currentNode = this.head;
@@ -226,7 +228,7 @@ class ThreadBinaryTree {
             right = right.left;
         return right;
     }
-    order() {
+    order(showThread = false) {
         let node = this.root;
         let result = [];
         if (node == null)
@@ -236,6 +238,9 @@ class ThreadBinaryTree {
             node = node.left;
         do {
             result.push(node);
+            if (node.isThread && showThread) {
+                result.push(new ThreadBinaryTree.Node("🧵"));
+            }
             node = this.findSuccessor(node);
         } while (node != null);
         return result;

@@ -7,6 +7,9 @@ function initThreadBinaryTreeMode() {
     let insertButton = createButton("insert", () => {
         runInsertTBT(tree, cnt++);
     });
+    let orderButton = createButton("order", () => {
+        alert(tree.order(true).map(n => n.key).join(" → "));
+    });
     let initButton = createButton("init", () => {
         clearCanvas();
         removeAllChildNodes(canvas);
@@ -20,7 +23,7 @@ function initThreadBinaryTreeMode() {
         runInsertTBT(tree, num);
     });
     let commandListDiv = document.querySelector(".command-list");
-    commandListDiv.append(insertButton, insertCustomButton, initButton);
+    commandListDiv.append(insertButton, insertCustomButton, orderButton, initButton);
     applyThreadBinaryTreeView(tree);
 }
 function runInsertTBT(tree, key) {

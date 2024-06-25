@@ -43,14 +43,41 @@ function runPush(stack, data) {
     return res;
 }
 function runPop(stack) {
-    let res = stack.pop();
-    if (res !== null) {
+    const DURATION = 150;
+    if (!stack.isEmpty()) {
         applyStackView(stack);
+        const canvas = document.querySelector(".canvas");
+        const newElement = canvas.querySelector(".stack-container:last-child");
+        const keyframes = {
+            translate: ["0 0", "0 -2rem"]
+        };
+        const options = {
+            duration: DURATION,
+            easing: "ease-out"
+        };
+        newElement.animate(keyframes, options);
     }
+    setTimeout(() => {
+        let res = stack.pop();
+        if (res !== null) {
+            applyStackView(stack);
+        }
+    }, DURATION);
 }
 function runInitStack(stack) {
     let res = stack.init();
-    applyStackView(stack);
+    let stacks = document.querySelectorAll(".stack-canvas > .stack-container");
+    let len = stacks.length;
+    for (let s of stacks) {
+        s.animate({
+            translate: ["0 0", "0 -2rem"]
+        }, {
+            duration: 150
+        });
+    }
+    setTimeout(() => {
+        applyStackView(stack);
+    }, 150);
 }
 function applyStackView(stack) {
     const canvas = document.querySelector(".canvas");

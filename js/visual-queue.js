@@ -46,14 +46,33 @@ function runEnqueue(queue, data) {
     return res;
 }
 function runDequeue(queue) {
-    let res = queue.dequeue();
-    if (res !== null) {
-        applyQueueView(queue);
+    if (!queue.isEmpty()) {
+        const canvas = document.querySelector(".canvas");
+        const newElement = canvas.querySelectorAll(`.queue-container`)[queue.front + 1];
+        const keyframes = {
+            translate: ["0 0", "-2rem 0"]
+        };
+        const options = {
+            duration: 150,
+            easing: "ease-in"
+        };
+        newElement.animate(keyframes, options);
     }
+    setTimeout(() => {
+        let res = queue.dequeue();
+        if (res !== null) {
+            applyQueueView(queue);
+        }
+    }, 150);
 }
 function runInitQueue(queue) {
     let res = queue.init();
     applyQueueView(queue);
+    let box = document.querySelector(".queue_nodes-container");
+    box.style.display = "none";
+    setTimeout(() => {
+        box.style.display = "block";
+    }, 150);
 }
 function applyQueueView(queue) {
     const canvas = document.querySelector(".canvas");

@@ -1,6 +1,3 @@
-
-
-
 function initLinkedListMode() {
   let list = new LinkedList<number>();
   let cnt = 1;
@@ -8,10 +5,20 @@ function initLinkedListMode() {
 
   document.querySelector(".canvas")!.className = "canvas list-canvas";
 
-  let appendButton = createButton("append", () => runAppend(list, cnt++));
-  let prependButton = createButton("prepend", () => runPrepend(list, cnt++));
-  let deleteButton = createButton("delete", () => runDelete(list, delCnt++));
-  let initButton = createButton("init", () => () => {
+  let appendButton = createButton("append", () => {
+    if (list.length < 48) runAppend(list, cnt++);
+    else alert("최대 크기 입니다.");
+  });
+  let prependButton = createButton("prepend", () => {
+    if (list.length < 48) runPrepend(list, cnt++);
+    else alert("최대 크기 입니다.");
+  });
+  let deleteButton = createButton("delete", () => {
+    let res = list.delete(delCnt);
+    if (res) delCnt++;
+    applyLinkedListView(list);
+  });
+  let initButton = createButton("init", () => {
     runInitList(list);
     cnt = 1;
     delCnt = 1;
@@ -25,26 +32,65 @@ function initLinkedListMode() {
 
 function runAppend(list: LinkedList<number>, key: number) {
   let res = list.append(key);
-  applyLinkedListView(list);
+  if (res !== null) {
+    applyLinkedListView(list);
+    const canvas = document.querySelector(".canvas") as HTMLDivElement;
+    const newElement = canvas.querySelectorAll(`.list-container`)[list.length - 1] as HTMLDivElement;
+    
+    const keyframes: PropertyIndexedKeyframes = {
+      translate: ["0 2rem", "0 0"]
+    }
+    const options: KeyframeAnimationOptions = {
+      duration: 150,
+      easing: "ease-out"
+    }
+    newElement.animate(keyframes, options)
+  }
 }
 
 function runPrepend(list: LinkedList<number>, key: number) {
   let res = list.prepend(key);
-  applyLinkedListView(list);
-}
-
-function runDelete(list: LinkedList<number>, key: number) {
-  let res = list.delete(key);
-  applyLinkedListView(list);
+  if (res !== null) {
+    applyLinkedListView(list);
+    const canvas = document.querySelector(".canvas") as HTMLDivElement;
+    const newElement = canvas.querySelectorAll(`.list-container`)[0] as HTMLDivElement;
+    
+    const keyframes: PropertyIndexedKeyframes = {
+      translate: ["0 -2rem", "0 0"]
+    }
+    const options: KeyframeAnimationOptions = {
+      duration: 150,
+      easing: "ease-out"
+    }
+    newElement.animate(keyframes, options)
+  }
 }
 
 function runInitList(list: LinkedList<number>) {
-  list.init();
-  applyLinkedListView(list);
+  let i = list.length - 1;
+
+  let nodes: NodeListOf<HTMLElement>
+    = document.querySelectorAll(".list-nodes-container > .list-container")!;
+  
+  let loop = setInterval(() => {
+    if (i < 0) {
+      clearInterval(loop);
+    }
+
+    nodes[i--].style.display = "none";
+    console.log(nodes[i].innerText);
+  }, 20)
+
+  setTimeout(() => {
+    list.init();
+    applyLinkedListView(list);
+  }, list.length * 20);
 }
 
 function applyLinkedListView(list: LinkedList<number>) {
   const canvas = document.querySelector(".canvas") as HTMLDivElement;
+  const listNodesContainer: HTMLDivElement = document.createElement("div");
+  listNodesContainer.className = "list-nodes-container";
   const listContainers: HTMLDivElement[] = []
   removeAllChildNodes(canvas);
 
@@ -72,5 +118,6 @@ function applyLinkedListView(list: LinkedList<number>) {
   NullPointer.className = "null-pointer";
   NullPointer.innerHTML = "<span>null</span>";
 
-  canvas.append(...listContainers, NullPointer);
+  listNodesContainer.append(...listContainers, NullPointer)
+  canvas.append(listNodesContainer);
 }

@@ -55,15 +55,35 @@ function runEnqueue(queue: Queue, data: number) {
 }
 
 function runDequeue(queue: Queue): void {
-  let res = queue.dequeue();
-  if (res !== null) {
-    applyQueueView(queue);
+  if (!queue.isEmpty()) {
+    const canvas = document.querySelector(".canvas") as HTMLDivElement;
+    const newElement = canvas.querySelectorAll(`.queue-container`)[queue.front + 1] as HTMLDivElement;
+
+    const keyframes: PropertyIndexedKeyframes = {
+      translate: ["0 0", "-2rem 0"]
+    }
+    const options: KeyframeAnimationOptions = {
+      duration: 150,
+      easing: "ease-in"
+    }
+    newElement.animate(keyframes, options);
   }
+  setTimeout(() => {
+    let res = queue.dequeue();
+    if (res !== null) {
+      applyQueueView(queue);
+    }
+  }, 150);
 }
 
 function runInitQueue(queue: Queue): void {
   let res = queue.init();
   applyQueueView(queue);
+  let box = document.querySelector(".queue_nodes-container") as HTMLElement;
+  box.style.display = "none";
+  setTimeout(() => {
+    box.style.display = "block";
+  }, 150);
 }
 
 function applyQueueView(queue: Queue) {

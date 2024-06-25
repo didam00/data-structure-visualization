@@ -117,14 +117,14 @@ class LinkedList<T> {
     return items;
   }
 
-  delete(key: T): void {
+  delete(key: T): boolean {
     if (this.head === null) {
-      return;
+      return false;
     }
 
     if (this.head.key === key) {
       this.head = this.head.next;
-      return;
+      return true;
     }
 
     let cur = this.head;
@@ -134,7 +134,10 @@ class LinkedList<T> {
 
     if (cur.next !== null) {
       cur.next = cur.next.next;
+      return true;
     }
+    
+    return false;
   }
 
   find(key: T): LinkedList.Node<T> | null {
@@ -270,9 +273,9 @@ class ThreadBinaryTree<T> {
     return right;
   }
 
-  order(): ThreadBinaryTree.Node<T>[] {
+  order(showThread: boolean = false): ThreadBinaryTree.Node<T | "🧵">[] {
     let node = this.root;
-    let result: ThreadBinaryTree.Node<T>[] = [];
+    let result: ThreadBinaryTree.Node<T | "🧵">[] = [];
     if (node == null) return result;
 
     // 가장 왼쪽 노드로 이동
@@ -280,6 +283,9 @@ class ThreadBinaryTree<T> {
 
     do {
       result.push(node);
+      if (node.isThread && showThread) {
+        result.push(new ThreadBinaryTree.Node("🧵"));
+      }
       node = this.findSuccessor(node);
     } while (node != null);
 

@@ -102,7 +102,7 @@ function applyLinkedListView(list: LinkedList<number>) {
     listContainer.className = "list-container";
   
     const listNode = document.createElement("img");
-    listNode.src = "../res/svgs/linked-list.svg";
+    listNode.src = "res/svgs/linked-list.svg";
   
     const keyElement = document.createElement("span");
     keyElement.className = "key";

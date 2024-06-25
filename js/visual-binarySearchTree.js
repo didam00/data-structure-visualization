@@ -65,7 +65,7 @@ function applyBinarySearchTreeView(tree) {
         const nodeContainer = document.createElement("div");
         nodeContainer.className = "node-container";
         const treeNode = document.createElement("img");
-        treeNode.src = "../res/svgs/tree-node.svg";
+        treeNode.src = "res/svgs/tree-node.svg";
         const keyElement = document.createElement("span");
         keyElement.className = "key";
         keyElement.innerText = cur.key.toString();

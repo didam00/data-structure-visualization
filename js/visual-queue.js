@@ -24,7 +24,7 @@ function initQueueMode() {
     let commandListDiv = document.querySelector(".command-list");
     commandListDiv.append(enqueueButton, dequeueButton, initButton);
     const queueNodesContainer = document.createElement("img");
-    queueNodesContainer.src = "../res/svgs/queue-container.svg";
+    queueNodesContainer.src = "res/svgs/queue-container.svg";
     queueNodesContainer.className = "queue_nodes-container";
     document.querySelector(".canvas").appendChild(queueNodesContainer);
 }
@@ -79,7 +79,7 @@ function applyQueueView(queue) {
     const queueContainers = [];
     removeAllChildNodes(canvas);
     const queueNodesContainer = document.createElement("img");
-    queueNodesContainer.src = "../res/svgs/queue-container.svg";
+    queueNodesContainer.src = "res/svgs/queue-container.svg";
     queueNodesContainer.className = "queue_nodes-container";
     for (let i = 0; i < Queue.MAX_SIZE; i++) {
         const key = queue.items[i];
@@ -87,7 +87,7 @@ function applyQueueView(queue) {
         stackContainer.className = "queue-container";
         if (queue.front < i && i <= queue.rear) {
             const stackNode = document.createElement("img");
-            stackNode.src = "../res/svgs/queue.svg";
+            stackNode.src = "res/svgs/queue.svg";
             const keyElement = document.createElement("span");
             keyElement.className = "key";
             keyElement.innerText = key.toString();

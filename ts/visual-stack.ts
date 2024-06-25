@@ -102,7 +102,7 @@ function applyStackView(stack: Stack) {
     stackContainer.className = "stack-container";
   
     const stackNode = document.createElement("img");
-    stackNode.src = "../res/svgs/stack.svg";
+    stackNode.src = "res/svgs/stack.svg";
   
     const keyElement = document.createElement("span");
     keyElement.className = "key";

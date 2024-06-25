@@ -81,7 +81,7 @@ function applyPriorityQueueView(tree: Heap) {
     nodeContainer.className = "node-container";
   
     const treeNode = document.createElement("img");
-    treeNode.src = "../res/svgs/tree-node.svg";
+    treeNode.src = "res/svgs/tree-node.svg";
   
     const keyElement = document.createElement("span");
     keyElement.className = "key";
